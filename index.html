@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>العادات والمسبحة الإلكترونية - أذكاري</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#1976D2',
+              600: '#1565C0',
+              700: '#0d47a1',
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            amiri: ['Amiri', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Cairo & Amiri -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .dark body {
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+
+    /* Font Amiri for Calligraphy */
+    .font-dhikr {
+      font-family: 'Amiri', serif;
+      line-height: 1.8;
+    }
+
+    /* Screen View Control */
+    .screen {
+      display: none;
+      min-height: 100vh;
+    }
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Material Floating Inputs */
+    .material-input-group {
+      position: relative;
+      margin-top: 14px;
+      margin-bottom: 12px;
+    }
+    .material-input-group input,
+    .material-input-group select,
+    .material-input-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: transparent;
+      outline: none;
+      font-size: 15px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dark .material-input-group input,
+    .dark .material-input-group select,
+    .dark .material-input-group textarea {
+      border-color: #475569;
+      color: #f8fafc;
+      background: #1e293b;
+    }
+    .material-input-group input:focus,
+    .material-input-group select:focus,
+    .material-input-group textarea:focus {
+      border-color: #1976D2;
+      border-width: 2px;
+      padding: 13px 15px;
+    }
+    .material-input-group label {
+      position: absolute;
+      right: 12px;
+      top: -10px;
+      background-color: #ffffff;
+      padding: 0 6px;
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    .dark .material-input-group label {
+      background-color: #1e293b;
+      color: #94a3b8;
+    }
+
+    /* Bead Chain Animation Effects */
+    .bead-thread {
+      position: relative;
+      width: 2px;
+      background-color: #cbd5e1;
+      height: 100%;
+      margin: 0 auto;
+    }
+    .dark .bead-thread {
+      background-color: #475569;
+    }
+
+    .bead-item {
+      transition: transform 0.2s ease-out, background-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark ::webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    #annual-heatmap { grid-template-columns: repeat(15, minmax(0,1fr)); }
+    /* Ripple tap effect */
+    .tap-active:active {
+      transform: scale(0.97);
+    }
+  </style>
+
+
+
+<style id="weekly-days-style">
+  .weekly-day-card { min-width: 0; transition: transform .15s ease, box-shadow .15s ease; }
+  .weekly-day-card:active { transform: scale(.97); }
+  .weekly-day-card.is-today { box-shadow: 0 0 0 2px rgba(25,118,210,.16); }
+</style>
+
+
+<style id="seven-day-table-style">
+  /* Main tracker: 7 real calendar days, today is the first column. */
+  #date-columns-header > div,
+  #habits-list-container > div > div:last-child > div {
+    min-width: 0;
+  }
+  #date-columns-header,
+  #habits-list-container .grid-cols-7 {
+    direction: ltr;
+  }
+  #date-columns-header > div,
+  #habits-list-container .grid-cols-7 > div {
+    direction: rtl;
+  }
+  #habits-list-container .grid-cols-7 > div {
+    font-size: 12px;
+  }
+  @media (max-width: 430px) {
+    #date-columns-header > div { font-size: 10px; }
+    #habits-list-container .grid-cols-7 > div { padding-left: 0; padding-right: 0; }
+  }
+</style>
+
+
+<style id="premium-ui">
+:root{--p:#0f766e;--p2:#14b8a6;--gold:#d4a72c;--bg:#f4f7f6;--card:#fff;--text:#17302d;--muted:#71807d}
+*{box-sizing:border-box} body{background:radial-gradient(circle at 20% 0%,#dff5ef 0,#f4f7f6 35%,#eef3f2 100%)!important;color:var(--text)!important}
+#app{max-width:480px!important;background:var(--bg)!important;box-shadow:0 24px 70px rgba(15,118,110,.18)!important;border-left:1px solid rgba(15,118,110,.08);border-right:1px solid rgba(15,118,110,.08)}
+header{background:linear-gradient(135deg,#0b5d57,#0f766e 58%,#159b8f)!important;min-height:62px}
+header h1,header h2{letter-spacing:-.4px}
+#date-columns-header>div{background:rgba(255,255,255,.35);border-radius:10px;margin:0 2px;padding:5px 1px}
+#weekly-days-summary>div,#today-summary,#daily-total-counter{border:1px solid rgba(15,118,110,.12)!important;box-shadow:0 8px 24px rgba(15,118,110,.07)!important;background:rgba(255,255,255,.94)!important}
+#weekly-days-summary{margin-top:12px!important}
+#today-summary{background:linear-gradient(135deg,#fff,#effaf7)!important}
+#today-summary-percent{color:var(--p)!important}
+#today-summary-bar{background:linear-gradient(90deg,var(--p),var(--p2))!important}
+#daily-total-counter{background:linear-gradient(135deg,#fafffd,#e9f8f3)!important;border-color:#b9e5d8!important}
+#daily-total-count{color:var(--p)!important;font-size:38px!important}
+#habits-list-container{padding:0 10px 18px;gap:10px;display:flex;flex-direction:column;overflow-y:auto}
+#habits-list-container>div{border:1px solid rgba(15,118,110,.11)!important;border-radius:18px!important;background:#fff!important;box-shadow:0 6px 20px rgba(24,55,51,.07)!important;overflow:hidden}
+#habits-list-container>div:hover{box-shadow:0 10px 28px rgba(15,118,110,.12)!important}
+#screen-misbaha{background:linear-gradient(180deg,#edf8f5,#f7faf9)!important}
+#screen-misbaha header{box-shadow:0 8px 25px rgba(8,83,77,.22)!important}
+#dhikr-card-tap-area{border:1px solid #cde7e1!important;box-shadow:0 16px 40px rgba(15,118,110,.11)!important;background:linear-gradient(145deg,#fff,#f7fcfb)!important}
+#misbaha-dhikr-text{color:#173f3a!important}
+#btn-tap-counter-circle{background:radial-gradient(circle,#fff 55%,#e8f6f2 100%)!important;box-shadow:0 12px 35px rgba(15,118,110,.15)!important}
+#misbaha-count-main{color:var(--p)!important}
+#screen-misbaha .btn-quick-add-misbaha{border:1px solid #cfe4df;background:#fff!important}
+.material-input-group input,.material-input-group select,.material-input-group textarea{border:1px solid #cbded9!important;border-radius:14px!important;background:#fff!important;min-height:48px;box-shadow:0 3px 10px rgba(20,50,45,.04)}
+.material-input-group input:focus,.material-input-group select:focus,.material-input-group textarea:focus{border-color:var(--p)!important;box-shadow:0 0 0 4px rgba(20,184,166,.12)!important}
+.material-input-group label{background:var(--bg)!important;color:#52716c!important}
+#screen-form,#screen-detail{background:var(--bg)!important}
+#screen-form>header,#screen-detail>header{box-shadow:0 8px 25px rgba(8,83,77,.18)!important}
+#detail-target-bars>div,#score-chart-svg,#history-chart-svg{border-radius:16px}
+#modal-delete-habit>div,#modal-presets>div,#modal-log-entry>div,#modal-color-picker>div,#modal-filter-sort>div,#modal-dashboard>div,#modal-virtue>div,#modal-main-menu>div{border:1px solid rgba(15,118,110,.12);box-shadow:0 25px 70px rgba(0,0,0,.22)!important}
+#modal-presets>div>div:first-child,#modal-log-header,#modal-dashboard>div>div:first-child{background:linear-gradient(135deg,#0b5d57,#0f766e)!important}
+#modal-virtue>div>div:first-child{background:linear-gradient(135deg,#b88919,#e0b63c)!important}
+button{transition:transform .15s,box-shadow .15s,background .15s!important}
+button:active{transform:scale(.96)!important}
+.dark body{background:#071b19!important}.dark #app,.dark #screen-form,.dark #screen-detail{background:#0b2421!important}
+.dark #habits-list-container>div,.dark #today-summary,.dark #daily-total-counter,.dark #weekly-days-summary>div,.dark #dhikr-card-tap-area{background:#102c28!important;border-color:#244a45!important}
+.dark #today-summary{background:linear-gradient(135deg,#102c28,#123833)!important}
+.dark .material-input-group input,.dark .material-input-group select,.dark .material-input-group textarea{background:#102c28!important;border-color:#31544f!important}
+.dark .material-input-group label{background:#0b2421!important}
+@media(max-width:430px){#app{width:100%}header{min-height:58px}#habits-list-container{padding-left:8px;padding-right:8px}#misbaha-dhikr-text{font-size:28px!important}#btn-tap-counter-circle{width:132px!important;height:132px!important}}
+</style>
+
+
+  <meta name="theme-color" content="#0f766e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 flex justify-center items-center min-h-screen">
+
+
+
+
+  <!-- Main Container Mobile Wrapper -->
+  <div id="app" class="w-full max-w-md bg-white dark:bg-slate-800 min-h-screen shadow-2xl relative flex flex-col overflow-hidden transition-colors">
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: HABITS LIST MAIN VIEW            -->
+    <!-- ========================================== -->
+    <div id="screen-main" class="screen active flex-1">
+      <!-- Top Action Bar -->
+      <header class="bg-[#333333] dark:bg-slate-900 text-white px-4 py-3.5 flex items-center justify-between shadow-md z-10">
+        <div class="flex items-center space-x-2 space-x-reverse">
+          <h1 class="text-xl font-bold tracking-wide">العادات والأذكار</h1>
+        </div>
+        <div class="flex items-center space-x-3 space-x-reverse text-lg">
+          <button id="btn-open-misbaha" title="المسبحة الإلكترونية" class="hover:text-amber-400 bg-blue-600/30 border border-blue-400/40 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition active:scale-95">
+            <i class="fa-solid fa-hands-praying text-amber-400"></i>
+            <span>أذكاري</span>
+          </button>
+          <button id="btn-add-preset" title="قوالب جاهزة" class="hover:text-amber-400 transition active:scale-95 text-xs bg-white/10 px-2.5 py-1 rounded-full font-semibold">
+            <i class="fa-solid fa-wand-magic-sparkles ml-1"></i>جاهز
+          </button>
+          <button id="btn-add-habit" title="إضافة عادة" class="hover:opacity-80 transition active:scale-95 p-1">
+            <i class="fa-solid fa-plus text-lg"></i>
+          </button>
+          <button id="btn-toggle-sound" title="الصوت والاهتزاز" class="hover:opacity-80 transition active:scale-95 p-1">
+            <i id="sound-icon" class="fa-solid fa-volume-high text-base"></i>
+          </button>
+          <button id="btn-toggle-dark" title="الوضع الليلي" class="hover:opacity-80 transition active:scale-95 p-1">
+            <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+          </button>
+          <button id="btn-filter-sort" title="تصفية وترتيب" class="hover:opacity-80 transition active:scale-95 p-1">
+            <i class="fa-solid fa-filter text-base"></i>
+          </button>
+          <button id="btn-main-menu" title="القائمة" class="hover:opacity-80 transition active:scale-95 p-1">
+            <i class="fa-solid fa-ellipsis-vertical text-base"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Date Column Bar Header -->
+      <div class="bg-gray-200 dark:bg-slate-700/60 border-b border-gray-300 dark:border-slate-600 py-2.5 px-3 flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 font-bold tracking-wider">
+        <div class="w-2/5 font-bold">العادة / الذكر</div>
+        <div id="date-columns-header" class="w-3/5 grid grid-cols-7 text-center">
+          <!-- Dynamic Date Labels inserted via JS -->
+        </div>
+      </div>
+
+      
+<!-- Weekly Days Summary -->
+<section id="weekly-days-summary" class="mx-3 mt-3 mb-2">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-2">
+    <div class="flex items-center justify-between px-1 mb-2">
+      <div class="flex items-center gap-2">
+        <i class="fa-regular fa-calendar-days text-[#1976D2]"></i>
+        <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200">أيام الأسبوع</span>
+      </div>
+      <span id="weekly-current-date" class="text-[10px] text-slate-400"></span>
+    </div>
+    <div id="weekly-days-container" class="grid grid-cols-7 gap-1"></div>
+  </div>
+</section>
+
+      <!-- Smart Today Summary -->
+      <section id="today-summary" class="mx-3 my-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <div class="text-[10px] text-slate-400 font-bold">ملخص اليوم</div>
+            <div id="today-summary-title" class="font-bold text-sm text-slate-800 dark:text-slate-100">ابدأ يومك بالذكر 🌿</div>
+          </div>
+          <div id="today-summary-percent" class="text-lg font-extrabold text-[#1976D2]">0%</div>
+        </div>
+        <div class="mt-2 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+          <div id="today-summary-bar" class="h-full rounded-full transition-all" style="width:0%;background:#1976D2"></div>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[10px] text-slate-400">
+          <span id="today-summary-count">0 / 0 أهداف مكتملة</span>
+          <button id="btn-today-summary" class="font-bold text-[#1976D2]">تفاصيل</button>
+        </div>
+      </section>
+
+
+      <!-- Daily Total Tasbih Counter -->
+      <section id="daily-total-counter" class="mx-3 my-3 p-4 rounded-2xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-slate-700 shadow-sm text-center">
+        <div class="text-[11px] text-slate-400 font-bold mb-1">إجمالي تسابيح اليوم</div>
+        <div id="daily-total-count" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">0</div>
+        <div class="text-[10px] text-slate-400 mt-1">مجموع جميع الأذكار التي تم عدّها اليوم</div>
+      </section>
+
+      <!-- Habits List -->
+      <div id="habits-list-container" class="flex-1 overflow-y-auto divide-y divide-gray-200 dark:divide-slate-700">
+        <!-- Dynamic Habit Rows inserted here -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: DIGITAL MISBAHA VIEW (أذكاري)    -->
+    <!-- ========================================== -->
+    <div id="screen-misbaha" class="screen flex-1 bg-slate-50 dark:bg-slate-900 relative">
+      <!-- Top Action Header -->
+      <header class="bg-[#1976D2] text-white px-3 py-3 flex items-center justify-between shadow-md z-10">
+        <div class="flex items-center space-x-3 space-x-reverse">
+          <button id="btn-back-from-misbaha" title="رجوع" class="text-xl hover:opacity-80 p-1">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <h2 class="text-xl font-bold tracking-wide">أذكاري</h2>
+        </div>
+        
+        <div class="flex items-center space-x-3 space-x-reverse text-lg">
+          <button id="btn-share-dhikr" title="مشاركة" class="hover:opacity-80 active:scale-95 p-1">
+            <i class="fa-solid fa-share-nodes"></i>
+          </button>
+          <button id="btn-undo-misbaha" title="تراجع عن آخر ضغطة" class="text-white/90 hover:text-white text-lg px-2"><i class="fa-solid fa-rotate-left"></i></button>
+      <button id="btn-reset-misbaha-top" title="إعادة ضبط الذكر" class="hover:opacity-80 active:scale-95 p-1">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button id="btn-toggle-dark-misbaha" title="الوضع الليلي" class="hover:opacity-80 active:scale-95 p-1">
+            <i id="theme-icon-misbaha" class="fa-solid fa-moon"></i>
+          </button>
+          <button id="btn-toggle-sound-misbaha" title="الصوت والاهتزاز" class="hover:opacity-80 active:scale-95 p-1">
+            <i id="sound-icon-misbaha" class="fa-solid fa-volume-high"></i>
+          </button>
+          <button id="btn-misbaha-presets" title="القائمة" class="hover:opacity-80 active:scale-95 p-1">
+            <i class="fa-solid fa-sliders"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Date Banner (Gregorian + Hijri) -->
+      <div class="px-4 py-2 flex justify-center">
+        <div class="bg-blue-100/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-full px-4 py-1 text-xs font-semibold text-blue-900 dark:text-blue-200 shadow-sm flex items-center gap-1.5">
+          <i class="fa-regular fa-calendar-days text-blue-600 dark:text-blue-400"></i>
+          <span id="misbaha-hijri-date">الجمعة، 11 سبتمبر 2026 • 29 ربيع الأول 1448</span>
+        </div>
+      </div>
+
+      <!-- Main Body: Bead String + Central Dhikr Card -->
+      <div class="flex-1 flex px-3 py-2 gap-3 relative overflow-hidden items-stretch">
+        
+        <!-- Left Side Bead Chain Container -->
+        <div class="w-12 bg-blue-50/50 dark:bg-slate-800/50 rounded-2xl border border-blue-100 dark:border-slate-700/60 relative flex flex-col justify-between py-4 items-center overflow-hidden shadow-inner">
+          <div class="bead-thread"></div>
+          <!-- Beads Array JS populated -->
+          <div id="beads-container" class="absolute inset-0 flex flex-col justify-around items-center py-3 z-10 pointer-events-none">
+            <!-- Dynamic 7 beads rendered here -->
+          </div>
+        </div>
+
+        <!-- Center: Interactive Calligraphy Card -->
+        <div id="dhikr-card-tap-area" class="flex-1 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-5 flex flex-col justify-between items-center relative cursor-pointer active:scale-[0.99] transition transform select-none overflow-hidden">
+          
+          <!-- Favorite Star Icon -->
+          <div class="w-full flex justify-between items-center">
+            <button id="btn-virtue-dhikr" title="فضل الذكر" class="text-slate-400 hover:text-amber-500 text-xl transition"><i class="fa-solid fa-circle-info"></i></button>
+            <button id="btn-fav-dhikr" class="text-gray-300 dark:text-gray-600 hover:text-amber-400 text-xl transition">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+
+          <!-- Dhikr Text -->
+          <div class="my-auto text-center px-2">
+            <p id="misbaha-dhikr-text" class="font-dhikr text-3xl md:text-4xl text-slate-800 dark:text-slate-100 font-bold leading-relaxed tracking-wide drop-shadow-sm" dir="rtl">
+              الْحَمْدُ لِلَّهِ
+            </p>
+            <p id="misbaha-dhikr-hint" class="text-[11px] text-slate-400 dark:text-slate-500 font-semibold mt-3">
+              انقر هنا أو على العداد للتسبيح
+            </p>
+          </div>
+
+          <!-- Sub target info -->
+          <div class="w-full flex justify-between items-center text-xs text-gray-400 dark:text-gray-500 font-medium border-t border-slate-100 dark:border-slate-700/60 pt-2">
+            <span id="misbaha-target-info">الهدف: 1000</span>
+            <span id="misbaha-streak-info" class="text-amber-500 font-bold"><i class="fa-solid fa-fire text-xs ml-1"></i>0 أيام</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Controls Area -->
+      <div class="p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shadow-lg space-y-3">
+        
+        <!-- Counter Circle & Ring Progress -->
+        <div class="flex justify-center items-center">
+          <div id="btn-tap-counter-circle" class="relative w-36 h-36 rounded-full flex flex-col items-center justify-center cursor-pointer active:scale-95 transition shadow-md bg-blue-50/40 dark:bg-slate-900">
+            <!-- SVG Circle Progress Ring -->
+            <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" stroke="#e2e8f0" class="dark:stroke-slate-700" stroke-width="6" fill="none" />
+              <circle id="misbaha-ring-progress" cx="50" cy="50" r="42" stroke="#1976D2" stroke-width="7" stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" fill="none" class="transition-all duration-150" />
+            </svg>
+
+            <!-- Counter Number Text -->
+            <span id="misbaha-count-main" class="text-3xl font-extrabold text-blue-700 dark:text-blue-400 font-mono tracking-tight">50</span>
+            <div class="w-10 h-[1px] bg-slate-300 dark:bg-slate-700 my-0.5"></div>
+            <span id="misbaha-count-target" class="text-xs font-bold text-slate-400 dark:text-slate-500 font-mono">1000</span>
+          </div>
+        </div>
+
+        <!-- Quick Multipliers -->
+        <div class="flex justify-center items-center space-x-2 space-x-reverse text-xs font-bold">
+          <button class="btn-quick-add-misbaha px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95" data-add="1">+1</button>
+          <button class="btn-quick-add-misbaha px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95" data-add="10">+10</button>
+          <button class="btn-quick-add-misbaha px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95" data-add="33">+33</button>
+          <button class="btn-quick-add-misbaha px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95" data-add="100">+100</button>
+          <button id="btn-edit-manual-misbaha" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-300 hover:bg-blue-100 transition active:scale-95">تعديل</button>
+        </div>
+
+        <!-- Navigation Row Controls -->
+        <div class="flex items-center justify-between px-2 pt-1 text-slate-600 dark:text-slate-300">
+          <button id="btn-prev-dhikr" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 flex items-center justify-center text-lg active:scale-95 transition">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <button id="btn-mic-dhikr" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 flex items-center justify-center text-sm active:scale-95 transition" title="قراءة صوتية">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+
+          <!-- Index Pill -->
+          <div id="misbaha-index-pill" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-1 rounded-full text-xs font-bold font-mono">
+            4/14
+          </div>
+
+          <button id="btn-reset-misbaha" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-red-500 flex items-center justify-center text-sm active:scale-95 transition" title="تصفير العداد">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+
+          <button id="btn-next-dhikr" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 flex items-center justify-center text-lg active:scale-95 transition">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: CREATE / EDIT HABIT VIEW        -->
+    <!-- ========================================== -->
+    <div id="screen-form" class="screen flex-1 bg-white dark:bg-slate-800">
+      <header class="bg-[#1976D2] text-white px-4 py-3.5 flex items-center justify-between shadow-md" id="form-header">
+        <div class="flex items-center space-x-3 space-x-reverse">
+          <button id="btn-cancel-form" class="text-xl hover:opacity-80 p-1">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <h2 id="form-screen-title" class="text-xl font-bold">إنشاء عادة جديد</h2>
+        </div>
+        <button id="btn-save-habit" class="bg-white/10 border border-white/80 px-4 py-1.5 rounded-md text-sm font-bold tracking-wide hover:bg-white/20 active:scale-95 transition">
+          حفظ
+        </button>
+      </header>
+
+      <div class="p-4 space-y-3 overflow-y-auto flex-1">
+        <!-- Name & Color Row -->
+        <div class="flex space-x-3 space-x-reverse items-stretch">
+          <div class="material-input-group flex-1 !mt-0">
+            <label>اسم العادة / الذكر</label>
+            <input type="text" id="input-name" placeholder="مثال: سبحان الله وبحمده" dir="auto" class="font-semibold text-gray-800 dark:text-gray-100">
+          </div>
+          <div class="material-input-group w-20 !mt-0 flex flex-col justify-center items-center cursor-pointer relative" id="btn-color-picker-trigger">
+            <label>اللون</label>
+            <div id="selected-color-swatch" class="w-7 h-7 rounded-md bg-[#1976D2] shadow"></div>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <div class="material-input-group">
+          <label>السؤال التذكيري</label>
+          <input type="text" id="input-question" placeholder="مثال: كم مرة ذكرت الله اليوم؟">
+        </div>
+
+        <!-- Unit -->
+        <div class="material-input-group">
+          <label>وحدة القياس</label>
+          <input type="text" id="input-unit" placeholder="مثال: مرة، صفحة، كيلو">
+        </div>
+
+        <!-- Target & Frequency -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="material-input-group">
+            <label>الهدف اليومي</label>
+            <input type="number" id="input-target" placeholder="مثال: 100" value="100">
+          </div>
+          <div class="material-input-group">
+            <label>التكرار</label>
+            <select id="select-frequency">
+              <option value="كل يوم">كل يوم</option>
+              <option value="5 أيام في الأسبوع">5 أيام في الأسبوع</option>
+              <option value="3 أيام في الأسبوع">3 أيام في الأسبوع</option>
+              <option value="أسبوعياً">أسبوعياً</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Type -->
+        <div class="material-input-group">
+          <label>نوع الهدف</label>
+          <select id="select-target-type">
+            <option value="على الأقل">على الأقل</option>
+            <option value="على الأكثر">على الأكثر</option>
+          </select>
+        </div>
+
+        <!-- Reminder -->
+        <div class="material-input-group">
+          <label>التذكير</label>
+          <select id="select-reminder">
+            <option value="إيقاف">إيقاف</option>
+            <option value="08:00 ص">08:00 صباحاً</option>
+            <option value="12:00 م">12:00 ظهراً</option>
+            <option value="08:00 م">08:00 مساءً</option>
+          </select>
+        </div>
+
+        <!-- Notes -->
+        <div class="material-input-group">
+          <label>ملاحظات</label>
+          <textarea id="input-notes" rows="3" placeholder="(اختياري)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4: HABIT DETAIL VIEW & ANALYTICS    -->
+    <!-- ========================================== -->
+    <div id="screen-detail" class="screen flex-1 bg-white dark:bg-slate-800">
+      <!-- Detail Header Bar -->
+      <header id="detail-header" class="bg-[#1976D2] text-white px-4 py-3.5 flex items-center justify-between shadow-md transition-colors">
+        <div class="flex items-center space-x-3 space-x-reverse overflow-hidden">
+          <button id="btn-back-detail" class="text-xl hover:opacity-80 p-1">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <h2 id="detail-title" class="text-xl font-bold truncate" dir="auto">العنوان</h2>
+        </div>
+        <div class="flex items-center space-x-4 space-x-reverse text-lg">
+          <button id="btn-edit-habit" title="تعديل" class="hover:opacity-80 p-1">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button id="btn-delete-habit" title="حذف" class="hover:opacity-80 p-1">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Meta Summary Strip -->
+      <div class="bg-slate-100 dark:bg-slate-700/80 border-b border-slate-200 dark:border-slate-600 py-2.5 px-4 flex items-center justify-around text-slate-700 dark:text-slate-200 text-xs font-semibold">
+        <div class="flex items-center space-x-1 space-x-reverse">
+          <i class="fa-solid fa-circle-arrow-up text-blue-500"></i>
+          <span id="detail-meta-target">100</span>
+        </div>
+        <div class="flex items-center space-x-1 space-x-reverse">
+          <i class="fa-solid fa-calendar-days text-gray-500"></i>
+          <span id="detail-meta-frequency">كل يوم</span>
+        </div>
+        <div class="flex items-center space-x-1 space-x-reverse">
+          <i class="fa-solid fa-fire text-amber-500"></i>
+          <span id="detail-meta-streak" class="font-bold text-amber-600 dark:text-amber-400">0 أيام</span>
+        </div>
+        <div class="flex items-center space-x-1 space-x-reverse">
+          <i class="fa-solid fa-bell text-gray-500"></i>
+          <span id="detail-meta-reminder">إيقاف</span>
+        </div>
+      </div>
+
+      <!-- Analytics Body Scroll Container -->
+      <div class="p-4 space-y-6 overflow-y-auto flex-1">
+
+        <!-- Target Progress Section -->
+        <section>
+          <h3 id="detail-section-target-title" class="text-base font-bold text-[#1976D2] mb-3">الهدف والتقدم</h3>
+          <div class="space-y-2.5 text-xs font-bold text-slate-500 dark:text-slate-400">
+            <div id="detail-target-bars" class="space-y-2.5"></div>
+          </div>
+        </section>
+
+        <hr class="border-slate-200 dark:border-slate-700">
+
+        <!-- Score Line Chart Section -->
+        <section>
+          <div class="flex items-center justify-between mb-2">
+            <h3 id="detail-section-score-title" class="text-base font-bold text-[#1976D2]">الاستمرارية والالتزام</h3>
+            <select id="detail-score-range" class="text-xs bg-transparent border-0 outline-none text-slate-500 font-semibold">
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+            </select>
+          </div>
+          <div class="w-full h-40 bg-slate-50 dark:bg-slate-800/80 rounded-xl p-2 relative">
+            <svg id="score-chart-svg" class="w-full h-full" viewBox="0 0 320 140">
+              <line x1="35" y1="20" x2="310" y2="20" stroke="#e2e8f0" stroke-width="1" />
+              <text x="5" y="24" fill="#94a3b8" font-size="10">100%</text>
+
+              <line x1="35" y1="70" x2="310" y2="70" stroke="#e2e8f0" stroke-width="1" />
+              <text x="10" y="74" fill="#94a3b8" font-size="10">50%</text>
+
+              <line x1="35" y1="120" x2="310" y2="120" stroke="#e2e8f0" stroke-width="1" />
+              <text x="10" y="124" fill="#94a3b8" font-size="10">0%</text>
+
+              <polyline id="score-chart-line" points="35,120 100,120 200,120 295,20" fill="none" stroke="#1976D2" stroke-width="3" stroke-linecap="round" />
+              <circle id="score-chart-point" cx="295" cy="20" r="5" fill="#1976D2" />
+            </svg>
+          </div>
+        </section>
+
+        <hr class="border-slate-200 dark:border-slate-700">
+
+        <!-- History Bar Chart Section -->
+        <section>
+          <div class="flex items-center justify-between mb-2">
+            <h3 id="detail-section-history-title" class="text-base font-bold text-[#1976D2]">سجل الأيام السابقة</h3>
+            <select id="detail-history-range" class="text-xs bg-transparent border-0 outline-none text-slate-500 font-semibold">
+              <option value="day">اليوم</option>
+              <option value="week" selected>الأسبوع</option>
+              <option value="month">الشهر</option>
+            </select>
+          </div>
+          <div class="w-full h-44 bg-slate-50 dark:bg-slate-800/80 rounded-xl p-2 relative">
+            <svg id="history-chart-svg" class="w-full h-full" viewBox="0 0 320 140">
+              <g id="history-bars-group">
+                <!-- Bars dynamically inserted via JS -->
+              </g>
+            </svg>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODALS & OVERLAYS                          -->
+    <!-- ========================================== -->
+
+    <!-- Delete Habit Confirmation Modal -->
+    <div id="modal-delete-habit" class="fixed inset-0 bg-black/60 z-[90] hidden items-center justify-center p-4 backdrop-blur-xs">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="p-5 text-center">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 flex items-center justify-center text-2xl">
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <h4 class="font-bold text-lg text-slate-800 dark:text-white">حذف الذكر؟</h4>
+          <p id="delete-habit-message" class="text-sm text-slate-500 dark:text-slate-400 mt-2">سيتم حذف الذكر من القائمة، مع الاحتفاظ به في نسخة التصدير فقط إذا كنت قد صدّرت بياناتك مسبقًا.</p>
+        </div>
+        <div class="p-4 pt-0 flex gap-2">
+          <button id="btn-cancel-delete-habit" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold">إلغاء</button>
+          <button id="btn-confirm-delete-habit" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold">حذف الذكر</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presets Library Modal -->
+    <div id="modal-presets" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4 backdrop-blur-xs">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden max-h-[85vh] flex flex-col">
+        <div class="bg-blue-600 text-white p-4 flex items-center justify-between">
+          <h4 class="font-bold text-base flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+            <span>قوالب عادات وأذكار جاهزة</span>
+          </h4>
+          <button id="btn-close-presets" class="text-xl p-1 hover:opacity-80"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Preset Tabs -->
+        <div class="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+          <button id="tab-presets-dhikr" class="flex-1 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 dark:text-blue-400">أذكار مأثورة (11)</button>
+          <button id="tab-presets-health" class="flex-1 py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400">عادات وصحة</button>
+        </div>
+
+        <div class="p-3 overflow-y-auto space-y-2 flex-1 divide-y divide-slate-100 dark:divide-slate-700/50" id="presets-container">
+          <!-- Dynamically inserted presets -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Log Value Modal -->
+    <div id="modal-log-entry" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden animate-in fade-in zoom-in duration-150">
+        <div class="bg-[#1976D2] text-white p-4 flex items-center justify-between" id="modal-log-header">
+          <h4 id="modal-log-title" class="font-bold text-base truncate">تحديث العداد</h4>
+          <span id="modal-log-date" class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">الخميس 10</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <p id="modal-log-question" class="text-xs text-slate-500 dark:text-slate-400 font-semibold">أدخل الكمية أو استخدم العداد السريع:</p>
+          
+          <div class="flex items-center justify-between space-x-1 space-x-reverse">
+            <button id="btn-log-minus-10" class="w-9 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center active:scale-95 transition">-10</button>
+            <button id="btn-log-minus-1" class="w-9 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-base font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center active:scale-95 transition">-1</button>
+            
+            <div class="flex-1 px-1">
+              <input type="number" id="input-log-val" class="w-full border-2 border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg py-1.5 px-2 text-center text-xl font-bold focus:border-[#1976D2] outline-none" value="100">
+              <span class="block text-[10px] text-slate-400 text-center font-bold mt-1">كتابة يدوي / عداد</span>
+            </div>
+
+            <button id="btn-log-plus-1" class="w-9 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-base font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center active:scale-95 transition">+1</button>
+            <button id="btn-log-plus-10" class="w-9 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center active:scale-95 transition">+10</button>
+          </div>
+
+          <div class="grid grid-cols-5 gap-1 pt-1">
+            <button id="btn-step-1" class="py-1.5 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-md hover:bg-slate-200 active:scale-95 transition">+1</button>
+            <button id="btn-step-5" class="py-1.5 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-md hover:bg-slate-200 active:scale-95 transition">+5</button>
+            <button id="btn-step-10" class="py-1.5 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-md hover:bg-slate-200 active:scale-95 transition">+10</button>
+            <button id="btn-step-50" class="py-1.5 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-md hover:bg-slate-200 active:scale-95 transition">+50</button>
+            <button id="btn-step-100" class="py-1.5 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-md hover:bg-slate-200 active:scale-95 transition">+100</button>
+          </div>
+
+          <div class="flex space-x-2 space-x-reverse pt-1">
+            <button id="btn-quick-target" class="flex-1 py-2 bg-blue-50 dark:bg-slate-700 text-[#1976D2] dark:text-blue-300 font-bold text-xs rounded-lg hover:bg-blue-100 transition">إكمال الهدف (100)</button>
+            <button id="btn-quick-zero" class="py-2 px-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs rounded-lg hover:bg-slate-200 transition">تصفير (0)</button>
+          </div>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-700/50 px-4 py-3 flex justify-end space-x-2 space-x-reverse border-t border-slate-100 dark:border-slate-700">
+          <button id="btn-cancel-log" class="px-4 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 rounded-md">إلغاء</button>
+          <button id="btn-save-log" class="px-5 py-1.5 text-xs font-bold text-white bg-[#1976D2] rounded-md shadow hover:bg-blue-700">حفظ القيمة</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Picker Overlay -->
+    <div id="modal-color-picker" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-5 w-full max-w-xs space-y-4">
+        <h4 class="font-bold text-slate-800 dark:text-slate-100 text-base">اختر لون العادة</h4>
+        <div class="grid grid-cols-4 gap-3 py-2" id="color-palette-grid">
+          <!-- Swatches generated in JS -->
+        </div>
+        <div class="flex justify-end">
+          <button id="btn-close-color-modal" class="px-4 py-1.5 text-xs font-bold text-[#1976D2]">تم</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sorting / Filter Modal -->
+    <div id="modal-filter-sort" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-5 w-full max-w-xs space-y-3">
+        <h4 class="font-bold text-slate-800 dark:text-slate-100 text-base mb-2">ترتيب العادات</h4>
+        <div class="space-y-2 text-xs font-semibold">
+          <label class="flex items-center space-x-3 space-x-reverse p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">
+            <input type="radio" name="sort-option" value="manual" checked class="text-[#1976D2]">
+            <span class="text-slate-700 dark:text-slate-200">الترتيب اليدوي الافتراضي</span>
+          </label>
+          <label class="flex items-center space-x-3 space-x-reverse p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">
+            <input type="radio" name="sort-option" value="name" class="text-[#1976D2]">
+            <span class="text-slate-700 dark:text-slate-200">حسب الاسم الأبجدي</span>
+          </label>
+          <label class="flex items-center space-x-3 space-x-reverse p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">
+            <input type="radio" name="sort-option" value="favorite" class="text-[#1976D2]">
+            <span class="text-slate-700 dark:text-slate-200">المفضلة أولاً</span>
+          </label>
+          <label class="flex items-center space-x-3 space-x-reverse p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">
+            <input type="radio" name="sort-option" value="color" class="text-[#1976D2]">
+            <span class="text-slate-700 dark:text-slate-200">حسب اللون</span>
+          </label>
+        </div>
+        <div class="flex justify-end pt-2">
+          <button id="btn-close-filter-modal" class="px-4 py-1.5 text-xs font-bold text-[#1976D2]">تطبيق</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Dashboard Modal -->
+    <div id="modal-dashboard" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden max-h-[88vh] flex flex-col">
+        <div class="bg-[#1976D2] text-white p-4 flex items-center justify-between">
+          <h4 class="font-bold">📊 لوحة التقدم السنوي</h4>
+          <button id="btn-close-dashboard" class="text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-5">
+          <div id="dashboard-summary" class="grid grid-cols-3 gap-2"></div>
+          <section><h5 class="font-bold text-sm mb-2 text-[#1976D2]">سجل الالتزام خلال آخر 365 يوماً</h5><div id="annual-heatmap" class="grid grid-cols-15 gap-1"></div><div class="flex justify-between text-[9px] text-slate-400 mt-2"><span>أقل</span><span>أكثر</span></div></section>
+          <section><h5 class="font-bold text-sm mb-2 text-[#1976D2]">الأوسمة والإنجازات</h5><div id="badges-grid" class="grid grid-cols-2 gap-2"></div></section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dhikr Virtue Modal -->
+    <div id="modal-virtue" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="bg-amber-500 text-white p-4 flex items-center justify-between"><h4 class="font-bold">ⓘ فضل الذكر</h4><button id="btn-close-virtue" class="text-xl"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="p-5"><h5 id="virtue-title" class="font-dhikr font-bold text-lg mb-3"></h5><p id="virtue-text" class="text-sm leading-7 text-slate-600 dark:text-slate-300"></p><p id="virtue-source" class="text-[11px] mt-4 text-slate-400"></p></div>
+      </div>
+    </div>
+
+    <!-- Main Menu Modal -->
+    <div id="modal-main-menu" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 w-full max-w-xs space-y-2">
+        <h4 class="font-bold text-slate-800 dark:text-slate-100 text-base mb-2 px-2">الخيارات والبيانات</h4>
+        <button id="menu-opt-dashboard" class="w-full text-right px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg flex items-center space-x-2 space-x-reverse">
+          <i class="fa-solid fa-chart-column text-purple-500"></i><span>لوحة التقدم والأوسمة</span>
+        </button>
+        <button id="menu-opt-reminders" class="w-full text-right px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg flex items-center space-x-2 space-x-reverse">
+          <i class="fa-solid fa-bell text-amber-500"></i><span id="reminder-menu-label">تفعيل تذكيرات التطبيق</span>
+        </button>
+        <button id="menu-opt-export" class="w-full text-right px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg flex items-center space-x-2 space-x-reverse">
+          <i class="fa-solid fa-download text-blue-500"></i>
+          <span>تصدير نسخة احتياطية (JSON)</span>
+        </button>
+        <button id="menu-opt-import" class="w-full text-right px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg flex items-center space-x-2 space-x-reverse">
+          <i class="fa-solid fa-upload text-green-500"></i>
+          <span>استرجاع نسخة احتياطية</span>
+        </button>
+        <input type="file" id="input-import-file" accept=".json" class="hidden">
+        <hr class="border-slate-200 dark:border-slate-700">
+        <button id="menu-opt-reset" class="w-full text-right px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg flex items-center space-x-2 space-x-reverse">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>إعادة ضبط البيانات الأساسية</span>
+        </button>
+        <button id="menu-opt-close" class="w-full text-center px-3 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+          إغلاق
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC               -->
+  <!-- ========================================== -->
+  <script>
+    /* Audio Engine using Web Audio API */
+    let audioCtx = null;
+    let isSoundEnabled = true;
+
+    function playClickSound() {
+      if (!isSoundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+
+      // Tactile Haptic Feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(20);
+      }
+    }
+
+    // Color Palette
+    const COLOR_PALETTE = [
+      { name: 'Blue', hex: '#1976D2' },
+      { name: 'Teal', hex: '#009688' },
+      { name: 'Green', hex: '#4CAF50' },
+      { name: 'Amber', hex: '#FFA000' },
+      { name: 'Orange', hex: '#F57C00' },
+      { name: 'Deep Orange', hex: '#E64A19' },
+      { name: 'Purple', hex: '#7B1FA2' },
+      { name: 'Pink', hex: '#C2185B' },
+      { name: 'Indigo', hex: '#303F9F' }
+    ];
+
+    // Verified app presets are grouped by practical use; targets are app defaults, not religious prescriptions.
+    const REQUESTED_DHIKR_PRESETS = [
+      { name:'سُبْحَانَ اللَّهِ', target:100, unit:'مرة', color:'#1976D2', category:'ذكر' },
+      { name:'الْحَمْدُ لِلَّهِ', target:100, unit:'مرة', color:'#1976D2', category:'ذكر' },
+      { name:'اللَّهُ أَكْبَرُ', target:100, unit:'مرة', color:'#E64A19', category:'ذكر' },
+      { name:'لَا إِلَٰهَ إِلَّا اللَّهُ', target:100, unit:'مرة', color:'#FFA000', category:'ذكر' },
+      { name:'أَسْتَغْفِرُ اللَّهَ', target:100, unit:'مرة', color:'#009688', category:'ذكر' },
+      { name:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', target:100, unit:'مرة', color:'#009688', category:'ذكر' },
+      { name:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ', target:100, unit:'مرة', color:'#7B1FA2', category:'ذكر' },
+      { name:'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ', target:100, unit:'مرة', color:'#303F9F', category:'ذكر' },
+      { name:'لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ', target:100, unit:'مرة', color:'#F57C00', category:'ذكر' },
+      { name:'اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ', target:10, unit:'مرة', color:'#C2185B', category:'ذكر' }
+    ];
+
+    const DHIKR_PACKAGES = {
+      morning: {name:'☀️ أذكار الصباح', items:[
+        {name:'آية الكرسي',target:1,unit:'مرة',color:'#1976D2'},
+        {name:'قُلْ هُوَ اللَّهُ أَحَدٌ',target:3,unit:'مرات',color:'#7B1FA2'},
+        {name:'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',target:3,unit:'مرات',color:'#009688'},
+        {name:'قُلْ أَعُوذُ بِرَبِّ النَّاسِ',target:3,unit:'مرات',color:'#009688'},
+        {name:'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ',target:1,unit:'مرة',color:'#FFA000'},
+        {name:'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ',target:3,unit:'مرات',color:'#4CAF50'},
+        {name:'سَيِّدُ الِاسْتِغْفَارِ',target:1,unit:'مرة',color:'#009688'}]},
+      evening: {name:'🌙 أذكار المساء',items:[
+        {name:'آية الكرسي',target:1,unit:'مرة',color:'#1976D2'},
+        {name:'قُلْ هُوَ اللَّهُ أَحَدٌ',target:3,unit:'مرات',color:'#7B1FA2'},
+        {name:'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',target:3,unit:'مرات',color:'#009688'},
+        {name:'قُلْ أَعُوذُ بِرَبِّ النَّاسِ',target:3,unit:'مرات',color:'#009688'},
+        {name:'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ',target:1,unit:'مرة',color:'#FFA000'},
+        {name:'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ',target:3,unit:'مرات',color:'#4CAF50'},
+        {name:'سَيِّدُ الِاسْتِغْفَارِ',target:1,unit:'مرة',color:'#009688'}]},
+      sleep: {name:'🌙 أذكار النوم',items:[
+        {name:'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',target:1,unit:'مرة',color:'#303F9F'},
+        {name:'بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي',target:1,unit:'مرة',color:'#1976D2'},
+        {name:'سُبْحَانَ اللَّهِ',target:33,unit:'مرة',color:'#1976D2'},
+        {name:'الْحَمْدُ لِلَّهِ',target:33,unit:'مرة',color:'#009688'},
+        {name:'اللَّهُ أَكْبَرُ',target:34,unit:'مرة',color:'#E64A19'}]},
+      prayer: {name:'🕌 أذكار ما بعد الصلاة',items:[
+        {name:'أَسْتَغْفِرُ اللَّهَ',target:3,unit:'مرات',color:'#009688'},
+        {name:'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ',target:1,unit:'مرة',color:'#1976D2'},
+        {name:'سُبْحَانَ اللَّهِ',target:33,unit:'مرة',color:'#1976D2'},
+        {name:'الْحَمْدُ لِلَّهِ',target:33,unit:'مرة',color:'#009688'},
+        {name:'اللَّهُ أَكْبَرُ',target:33,unit:'مرة',color:'#E64A19'}]}
+    };
+
+    const GENERAL_HEALTH_PRESETS = [
+      { name: 'قراءة القرآن الكريم', target: 5, unit: 'صفحة', color: '#4CAF50', category: 'عبادة' },
+      { name: 'شرب الماء النقي', target: 8, unit: 'كوب', color: '#1976D2', category: 'صحة' },
+      { name: 'ممارسة الرياضة', target: 30, unit: 'دقيقة', color: '#E64A19', category: 'لياقة' },
+      { name: 'أذكار الصباح والمساء', target: 1, unit: 'مرة', color: '#FFA000', category: 'عبادة' }
+    ];
+
+    // Initial Data
+    const DEFAULT_HABITS = [
+      {
+        id: 'dhikr-1',
+        name: 'سُبْحَانَ اللَّهِ',
+        color: '#1976D2',
+        question: 'كم مرة سبّحت الله اليوم؟',
+        unit: 'مرة',
+        target: 100,
+        frequency: 'كل يوم',
+        targetType: 'على الأقل',
+        reminder: 'إيقاف',
+        notes: '',
+        fav: true,
+        history: {}
+      },
+      {
+        id: 'dhikr-2',
+        name: 'الْحَمْدُ لِلَّهِ',
+        color: '#1976D2',
+        question: 'كم مرة حمِدت الله اليوم؟',
+        unit: 'مرة',
+        target: 1000,
+        frequency: 'كل يوم',
+        targetType: 'على الأقل',
+        reminder: 'إيقاف',
+        notes: '',
+        fav: true,
+        history: {}
+      },
+      {
+        id: 'dhikr-3',
+        name: 'أسْتَغْفِرُ اللَّهَ',
+        color: '#009688',
+        question: 'كم مرة استغفرت اليوم؟',
+        unit: 'مرة',
+        target: 100,
+        frequency: 'كل يوم',
+        targetType: 'على الأقل',
+        reminder: 'إيقاف',
+        notes: '',
+        fav: false,
+        history: {}
+      }
+    ];
+
+    // Application State Variables
+    let habits = [];
+    let activeHabitId = null;
+    let editingHabitId = null;
+    let misbahaIndex = 0;
+    let selectedFormColor = '#1976D2';
+    let activeLogTarget = { habitId: null, dateStr: null };
+    let currentSort = 'manual';
+    let lastMisbahaAction = null;
+    let lastCelebrated = {};
+    let reminderTimer = null;
+    let remindersEnabled = localStorage.getItem('azkari_reminders_enabled') === '1';
+
+    // Date Utilities
+    function refreshDateContext(){
+      const now=new Date();
+      const fresh=[];
+      for(let i=0;i<7;i++){const d=new Date(now);d.setDate(now.getDate()-i);fresh.push(formatDateKey(d));}
+      dateKeys.splice(0,dateKeys.length,...fresh);
+    }
+    
+    function formatDateKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    const dateKeys = [];
+    refreshDateContext();
+
+
+    function startNewDayAtZero(){
+      refreshDateContext();
+      const todayKey = dateKeys[0];
+      let changed = false;
+
+      habits.forEach(habit => {
+        if (!habit.history || typeof habit.history !== 'object') {
+          habit.history = {};
+          changed = true;
+        }
+        if (!Object.prototype.hasOwnProperty.call(habit.history, todayKey)) {
+          habit.history[todayKey] = 0;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        localStorage.setItem('loop_habits_misbaha_data', JSON.stringify(habits));
+      }
+    }
+
+    function loadHabits() {
+      const saved = localStorage.getItem('loop_habits_misbaha_data');
+      if (saved) {
+        try {
+          habits = JSON.parse(saved);
+        } catch (e) {
+          habits = DEFAULT_HABITS;
+        }
+      } else {
+        habits = DEFAULT_HABITS;
+        const todayKey = dateKeys[0];
+        habits[0].history[todayKey] = 100;
+        habits[1].history[todayKey] = 50;
+        saveHabits();
+      }
+    }
+
+    function saveHabits() {
+      localStorage.setItem('loop_habits_misbaha_data', JSON.stringify(habits));
+      // Keep the top daily total synchronized with EVERY change to the counters.
+      if (typeof renderDailyTotalCounter === 'function') {
+        renderDailyTotalCounter();
+      }
+    }
+
+    function formatFullHijriHeader() {
+      try {
+        const now = new Date();
+        const gregStr = new Intl.DateTimeFormat('ar-EG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now);
+        const hijriStr = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
+        return `${gregStr} • ${hijriStr}`;
+      } catch (e) {
+        return `الجمعة، 11 سبتمبر 2026 • 29 ربيع الأول 1448`;
+      }
+    }
+
+    function getDayHeaderInfo(dateKey) {
+      const [year, month, day] = dateKey.split('-').map(Number);
+      const d = new Date(year, month - 1, day);
+      const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+      return {
+        dayName: dayNames[d.getDay()],
+        dayNum: d.getDate()
+      };
+    }
+
+    function calculateStreak(habit) {
+      let streak = 0;
+      let checkDate = new Date();
+      while (true) {
+        const key = formatDateKey(checkDate);
+        const val = habit.history[key] || 0;
+        if (val >= habit.target) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          if (streak === 0 && key === dateKeys[0]) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            continue;
+          }
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function recordMisbahaAction(habit){
+      if(!habit) return;
+      const key=dateKeys[0];
+      lastMisbahaAction={habitId:habit.id,dateKey:key,previous:Number(habit.history[key])||0};
+    }
+
+    function undoMisbahaAction(){
+      if(!lastMisbahaAction){ alert('لا توجد عملية يمكن التراجع عنها'); return; }
+      const h=habits.find(x=>x.id===lastMisbahaAction.habitId);
+      if(!h){lastMisbahaAction=null;return;}
+      h.history[lastMisbahaAction.dateKey]=lastMisbahaAction.previous;
+      saveHabits(); updateMisbahaUI(); renderHabitsList(); renderTodaySummary(); renderDailyTotalCounter();
+      lastMisbahaAction=null; playClickSound();
+    }
+
+    function celebrateGoal(habit){
+      if(!habit) return;
+      const key=dateKeys[0], val=Number(habit.history[key])||0, target=Number(habit.target)||1;
+      if(val<target || lastCelebrated[habit.id]===key) return;
+      lastCelebrated[habit.id]=key;
+      const msg=document.createElement('div');
+      msg.className='fixed inset-x-4 top-20 z-[80] mx-auto max-w-sm p-4 rounded-2xl bg-white dark:bg-slate-800 shadow-2xl border border-amber-300 text-center';
+      msg.innerHTML=`<div class="text-3xl mb-1">🎉</div><b class="text-slate-800 dark:text-white">أحسنت! اكتمل هدفك اليوم</b><div class="text-xs text-slate-400 mt-1">${habit.name}</div>`;
+      document.body.appendChild(msg); setTimeout(()=>msg.remove(),2200);
+    }
+
+    function renderTodaySummary(){
+      refreshDateContext();
+      const total=habits.length;
+      let completed=0, score=0;
+      habits.forEach(h=>{const v=Number(h.history[dateKeys[0]])||0,t=Number(h.target)||1; if(v>=t)completed++; score+=Math.min(1,v/t);});
+      const pct=total?Math.round(score/total*100):0;
+      const bar=document.getElementById('today-summary-bar'); if(bar)bar.style.width=pct+'%';
+      const pe=document.getElementById('today-summary-percent'); if(pe)pe.textContent=pct+'%';
+      const ce=document.getElementById('today-summary-count'); if(ce)ce.textContent=`${completed} / ${total} أهداف مكتملة`;
+      const te=document.getElementById('today-summary-title'); if(te)te.textContent=total===0?'أضف أول عادة لك اليوم 🌿':pct===100?'ما شاء الله! أكملت أهداف اليوم 🎉':pct>=70?'أنت قريب جدًا من إكمال يومك 💪':'خطوة صغيرة كل يوم تصنع فرقًا 🌱';
+    }
+
+
+    function renderDailyTotalCounter(){
+      refreshDateContext();
+      const todayKey = dateKeys[0];
+      const total = getDailyTotalForKey(todayKey);
+      const el = document.getElementById('daily-total-count');
+      if (el) el.textContent = total.toLocaleString('ar-EG');
+      const strip = document.getElementById('weekly-days-container');
+      if (strip) renderWeeklyDays();
+    }
+
+    function getLongestStreak(habit){
+      let best=0,run=0;
+      const keys=get365Keys();
+      for(const k of keys){const v=Number(habit.history[k])||0,t=Number(habit.target)||1;if(v>=t){run++;best=Math.max(best,run)}else run=0;}
+      return best;
+    }
+
+    function checkReminders(){
+      if(!remindersEnabled) return;
+      const now=new Date(), hh=String(now.getHours()).padStart(2,'0'), mm=String(now.getMinutes()).padStart(2,'0');
+      const current=`${hh}:${mm}`;
+      habits.forEach(h=>{
+        if(!h.reminder || h.reminder==='إيقاف') return;
+        const m=h.reminder.match(/(\d{2}):(\d{2})/); if(!m)return;
+        let rh=Number(m[1]); if(h.reminder.includes('م') && rh<12)rh+=12; if(h.reminder.includes('ص') && rh===12)rh=0;
+        const target=`${String(rh).padStart(2,'0')}:${m[2]}`;
+        const stamp=formatDateKey(now)+'_'+target+'_'+h.id;
+        if(target===current && localStorage.getItem('azkari_reminder_'+stamp)!=='1'){
+          localStorage.setItem('azkari_reminder_'+stamp,'1');
+          const text=`حان وقت ${h.name}`;
+          if('Notification' in window && Notification.permission==='granted') new Notification('أذكاري', {body:text});
+          else alert('🔔 '+text);
+        }
+      });
+    }
+
+    function toggleReminders(){
+      remindersEnabled=!remindersEnabled; localStorage.setItem('azkari_reminders_enabled',remindersEnabled?'1':'0');
+      const label=document.getElementById('reminder-menu-label'); if(label)label.textContent=remindersEnabled?'إيقاف تذكيرات التطبيق':'تفعيل تذكيرات التطبيق';
+      if(remindersEnabled && 'Notification' in window && Notification.permission==='default') Notification.requestPermission();
+      if(remindersEnabled){checkReminders();clearInterval(reminderTimer);reminderTimer=setInterval(checkReminders,30000);}
+      else clearInterval(reminderTimer);
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add('active');
+    }
+
+
+    // Weekly days: uses the app's existing habit history/dateKeys.
+    // The current day's total is always calculated from today's date key,
+    // so it naturally starts at 0 on a new day without deleting previous history.
+    function getDailyTotalForKey(key){
+      return habits.reduce((sum, habit) => {
+        const history = habit && habit.history ? habit.history : {};
+        return sum + (Number(history[key]) || 0);
+      }, 0);
+    }
+
+    function renderWeeklyDays(){
+      refreshDateContext();
+      const container = document.getElementById('weekly-days-container');
+      const currentDate = document.getElementById('weekly-current-date');
+      if(!container) return;
+
+      const todayKey = dateKeys[0];
+      const names = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+      if(currentDate){
+        try {
+          currentDate.textContent = new Intl.DateTimeFormat('ar-EG', {
+            day:'numeric', month:'short', year:'numeric'
+          }).format(new Date());
+        } catch(e) {
+          currentDate.textContent = todayKey;
+        }
+      }
+
+      container.innerHTML = '';
+
+      // dateKeys is newest -> oldest. Display oldest -> newest.
+      for(let i = dateKeys.length - 1; i >= 0; i--){
+        const key = dateKeys[i];
+        const [y,m,dn] = key.split('-').map(Number);
+        const d = new Date(y, m - 1, dn);
+        const total = getDailyTotalForKey(key);
+        const isToday = key === todayKey;
+
+        const card = document.createElement('div');
+        card.className =
+          'weekly-day-card rounded-xl border p-1.5 text-center ' +
+          (isToday
+            ? 'is-today bg-blue-50 border-blue-300 dark:bg-blue-900/20 dark:border-blue-700'
+            : 'bg-slate-50 border-slate-100 dark:bg-slate-700/40 dark:border-slate-600');
+
+        card.innerHTML = `
+          <div class="text-[9px] leading-3 font-bold ${isToday ? 'text-[#1976D2]' : 'text-slate-500 dark:text-slate-300'}">${names[d.getDay()]}</div>
+          <div class="text-xs font-extrabold mt-0.5 ${isToday ? 'text-[#1976D2]' : 'text-slate-700 dark:text-slate-200'}">${dn}</div>
+          <div class="text-[9px] mt-0.5 ${total > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400'}">${total.toLocaleString('ar-EG')}</div>
+        `;
+
+        if(!isToday){
+          card.title = `إجمالي تسابيح ${names[d.getDay()]} ${dn}: ${total}`;
+        } else {
+          card.title = 'اليوم الحالي — يبدأ عداد اليوم من 0 تلقائيًا';
+        }
+
+        container.appendChild(card);
+      }
+    }
+
+    function ensureDailyRollover(){
+      // No destructive reset is needed. Every counter is stored under its
+      // date key, and renderDailyTotalCounter always reads dateKeys[0].
+      refreshDateContext();
+      renderWeeklyDays();
+      renderDailyTotalCounter();
+    }
+
+    function renderDateHeaders() {
+      refreshDateContext();
+      const container = document.getElementById('date-columns-header');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Seven real calendar days: today first, then previous days.
+      for (let i = 0; i < 7; i++) {
+        const key = dateKeys[i];
+        const info = getDayHeaderInfo(key);
+        const col = document.createElement('div');
+        const isToday = i === 0;
+        col.className = 'flex flex-col items-center justify-center min-w-0';
+        col.innerHTML = `
+          <span class="text-[9px] leading-tight font-bold ${isToday ? 'text-[#1976D2]' : ''}">${info.dayName}</span>
+          <span class="text-[11px] font-extrabold ${isToday ? 'text-[#1976D2]' : 'text-slate-700 dark:text-slate-200'}">${info.dayNum}</span>
+        `;
+        container.appendChild(col);
+      }
+    }
+
+    function renderHabitsList() {
+      refreshDateContext();
+      const container = document.getElementById('habits-list-container');
+      container.innerHTML = '';
+
+      let listToRender = [...habits];
+      if (currentSort === 'name') {
+        listToRender.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (currentSort === 'favorite') {
+        listToRender.sort((a,b) => Number(b.fav)-Number(a.fav));
+      } else if (currentSort === 'color') {
+        listToRender.sort((a, b) => a.color.localeCompare(b.color));
+      }
+
+      listToRender.forEach((habit, hIdx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between py-3 px-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-b border-slate-100 dark:border-slate-700 select-none';
+        
+        const todayVal = habit.history[dateKeys[0]] || 0;
+        const target = habit.target || 100;
+
+        const leftCol = document.createElement('div');
+        leftCol.className = 'w-[40%] flex items-center space-x-2 space-x-reverse cursor-pointer pl-1';
+        
+        leftCol.onclick = () => {
+          misbahaIndex = habits.findIndex(h => h.id === habit.id);
+          openDigitalMisbaha();
+        };
+
+        const streak = calculateStreak(habit);
+
+        const ringSvg = `
+          <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 36 36">
+            <path stroke="#e2e8f0" stroke-width="4" fill="none" class="dark:stroke-slate-600" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path stroke="${habit.color}" stroke-width="4" stroke-dasharray="${Math.min(100, Math.round((todayVal / target) * 100))}, 100" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          </svg>
+        `;
+
+        leftCol.innerHTML = `
+          ${ringSvg}
+          <div class="flex flex-col">
+            <span class="font-bold text-sm break-words leading-snug" style="color: ${habit.color};" dir="auto">${habit.name}</span>
+            ${streak > 0 ? `<span class="text-[10px] text-amber-500 font-bold"><i class="fa-solid fa-fire text-[9px] ml-0.5"></i>${streak} أيام</span>` : ''}
+          </div>
+        `;
+
+        const rightGrid = document.createElement('div');
+        rightGrid.className = 'flex-1 grid grid-cols-7 gap-0.5 text-center font-bold text-sm';
+
+        for (let i = 0; i < 7; i++) {
+          const dateKey = dateKeys[i];
+          const val = habit.history[dateKey] || 0;
+          const cell = document.createElement('div');
+          cell.className = 'group relative cursor-pointer py-1 px-0.5 rounded-lg transition hover:bg-slate-100 dark:hover:bg-slate-700 flex flex-col items-center justify-center min-h-[46px]';
+          
+          const textColorClass = val > 0 ? '' : 'text-slate-300 dark:text-slate-600 font-normal';
+          const textStyle = val > 0 ? `color: ${habit.color};` : '';
+
+          cell.innerHTML = `
+            <span class="text-sm font-extrabold ${textColorClass} pointer-events-none" style="${textStyle}">${val}</span>
+            <div class="flex items-center space-x-1 space-x-reverse mt-0.5">
+              <button class="btn-quick-dec w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 text-slate-700 dark:text-slate-200 text-[10px] font-bold flex items-center justify-center active:scale-90" title="-1">-</button>
+              <button class="btn-quick-inc w-4 h-4 rounded-full text-white text-[10px] font-bold flex items-center justify-center active:scale-90 shadow-xs" style="background-color: ${habit.color}" title="+1">+</button>
+            </div>
+          `;
+
+          cell.onclick = (e) => {
+            if (e.target.classList.contains('btn-quick-inc') || e.target.classList.contains('btn-quick-dec')) {
+              return;
+            }
+            openLogModal(habit.id, dateKey, val);
+          };
+
+          const incBtn = cell.querySelector('.btn-quick-inc');
+          if (incBtn) {
+            incBtn.onclick = (e) => {
+              e.stopPropagation();
+              quickAdjustCount(habit.id, dateKey, 1);
+            };
+          }
+
+          const decBtn = cell.querySelector('.btn-quick-dec');
+          if (decBtn) {
+            decBtn.onclick = (e) => {
+              e.stopPropagation();
+              quickAdjustCount(habit.id, dateKey, -1);
+            };
+          }
+
+          rightGrid.appendChild(cell);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'flex items-center gap-1 mr-1';
+        const detailBtn = document.createElement('button');
+        detailBtn.className = 'w-8 h-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700 flex items-center justify-center';
+        detailBtn.title = 'التفاصيل والإحصائيات';
+        detailBtn.innerHTML = '<i class="fa-solid fa-chart-column text-sm"></i>';
+        detailBtn.onclick = (e) => { e.stopPropagation(); openHabitDetail(habit.id); };
+        const editBtn = document.createElement('button');
+        editBtn.className = 'w-8 h-8 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 flex items-center justify-center';
+        editBtn.title = 'تعديل الذكر';
+        editBtn.setAttribute('aria-label', 'تعديل الذكر');
+        editBtn.innerHTML = '<i class="fa-solid fa-pen text-sm"></i>';
+        editBtn.onclick = (e) => {
+          e.stopPropagation();
+          openCreateHabitForm(habit.id);
+        };
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'w-8 h-8 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center';
+        deleteBtn.title = 'حذف الذكر';
+        deleteBtn.setAttribute('aria-label', 'حذف الذكر');
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can text-sm"></i>';
+        deleteBtn.onclick = (e) => { e.stopPropagation(); requestDeleteHabit(habit.id); };
+
+        // ترتيب الأزرار: الإحصاء ← التعديل ← المسح
+        actions.appendChild(detailBtn);
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        row.appendChild(leftCol);
+        row.appendChild(rightGrid);
+        row.appendChild(actions);
+        container.appendChild(row);
+      });
+    }
+
+    function quickAdjustCount(habitId, dateKey, delta) {
+      playClickSound();
+      const habit = habits.find(h => h.id === habitId);
+      if (!habit) return;
+      const current = Number(habit.history[dateKey]) || 0;
+      const newVal = Math.max(0, current + delta);
+      habit.history[dateKey] = newVal;
+      saveHabits();
+      renderDailyTotalCounter();
+      renderHabitsList();
+      if (document.getElementById('screen-misbaha').classList.contains('active')) {
+        updateMisbahaUI();
+      }
+    }
+
+    function openDigitalMisbaha() {
+      refreshDateContext();
+      if (habits.length === 0) {
+        alert('يرجى إضافة أو اختيار ذكر أولاً');
+        return;
+      }
+      if (misbahaIndex >= habits.length) misbahaIndex = 0;
+      if (misbahaIndex < 0) misbahaIndex = habits.length - 1;
+
+      document.getElementById('misbaha-hijri-date').innerText = formatFullHijriHeader();
+      updateMisbahaUI();
+      showScreen('screen-misbaha');
+    }
+
+    function updateMisbahaUI() {
+      const habit = habits[misbahaIndex];
+      if (!habit) return;
+
+      document.getElementById('misbaha-dhikr-text').innerText = habit.name;
+      const currentVal = habit.history[dateKeys[0]] || 0;
+      const targetVal = habit.target || 100;
+
+      document.getElementById('misbaha-count-main').innerText = currentVal;
+      document.getElementById('misbaha-count-target').innerText = targetVal;
+      document.getElementById('misbaha-target-info').innerText = `الهدف: ${targetVal} ${habit.unit || 'مرة'}`;
+      document.getElementById('misbaha-streak-info').innerHTML = `<i class="fa-solid fa-fire text-xs ml-1"></i>${calculateStreak(habit)} أيام`;
+      document.getElementById('misbaha-index-pill').innerText = `${misbahaIndex + 1}/${habits.length}`;
+
+      // Star Fav Icon State
+      const favBtn = document.getElementById('btn-fav-dhikr');
+      if (habit.fav) {
+        favBtn.className = 'text-amber-400 text-xl transition';
+      } else {
+        favBtn.className = 'text-slate-300 dark:text-slate-600 hover:text-amber-400 text-xl transition';
+      }
+
+      // Ring SVG Progress
+      const circle = document.getElementById('misbaha-ring-progress');
+      const radius = 42;
+      const circumference = 2 * Math.PI * radius; // ~263.89
+      const pct = Math.min(1, currentVal / targetVal);
+      const offset = circumference - (pct * circumference);
+      circle.style.strokeDashoffset = offset;
+      circle.setAttribute('stroke', habit.color || '#1976D2');
+
+      renderMisbahaBeads(currentVal);
+    }
+
+    function renderMisbahaBeads(count) {
+      const container = document.getElementById('beads-container');
+      container.innerHTML = '';
+
+      // Render 7 beads vertically
+      const totalBeads = 7;
+      const activePosIndex = 3; // Center bead is active #3
+
+      for (let i = 0; i < totalBeads; i++) {
+        const bead = document.createElement('div');
+        
+        if (i === activePosIndex) {
+          // Active highlighted bead showing count
+          bead.className = 'w-9 h-9 rounded-full bg-[#1976D2] text-white flex items-center justify-center font-bold text-xs shadow-md border-2 border-white dark:border-slate-800 bead-item transform scale-110';
+          bead.innerText = count;
+        } else {
+          // Regular surrounding beads
+          const opacity = 1 - (Math.abs(i - activePosIndex) * 0.22);
+          bead.className = 'w-6 h-6 rounded-full bg-blue-300 dark:bg-slate-600 border border-white dark:border-slate-700 bead-item';
+          bead.style.opacity = Math.max(0.2, opacity);
+        }
+        container.appendChild(bead);
+      }
+    }
+
+    function incrementMisbahaCount(delta = 1) {
+      refreshDateContext();
+      playClickSound();
+      const habit = habits[misbahaIndex];
+      if (!habit) return;
+
+      recordMisbahaAction(habit);
+      const current = habit.history[dateKeys[0]] || 0;
+      habit.history[dateKeys[0]] = Math.max(0, current + delta);
+      saveHabits();
+      updateMisbahaUI();
+      renderHabitsList();
+      renderTodaySummary();
+      renderDailyTotalCounter();
+    }
+
+    function rangeKeys(days){
+      const keys=[]; const d=new Date();
+      for(let i=0;i<days;i++){ const x=new Date(d); x.setDate(d.getDate()-i); keys.push(formatDateKey(x)); }
+      return keys;
+    }
+    function sumHistory(habit, days){ return rangeKeys(days).reduce((s,k)=>s+(Number(habit.history[k])||0),0); }
+    function fmtCompact(n){
+      n=Number(n)||0;
+      if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+'M';
+      if(n>=1000) return (n/1000).toFixed(1).replace('.0','')+'k';
+      return String(n);
+    }
+    function renderTargetBars(habit){
+      const target=Number(habit.target)||1;
+      const periods=[
+        ['اليوم',1],['الأسبوع',7],['الشهر',30],['الربع',90],['السنة',365]
+      ];
+      document.getElementById('detail-target-bars').innerHTML=periods.map(([label,days])=>{
+        const actual=sumHistory(habit,days), goal=target*days;
+        const pct=Math.min(100,Math.round(actual/goal*100));
+        return `<div class="flex items-center gap-2">\n          <span class="w-12 shrink-0 text-right">${label}</span>\n          <div class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-md h-6 relative overflow-hidden flex items-center">\n            <div class="detail-target-fill h-full transition-all duration-300" data-pct="${pct}" style="width:${pct}%;background:${habit.color}"></div>\n            <div class="absolute inset-0 flex items-center justify-between px-2 text-xs font-bold pointer-events-none">\n              <span class="text-white drop-shadow">${fmtCompact(actual)}</span><span class="text-slate-400 dark:text-slate-300">${fmtCompact(goal)}</span>\n            </div>\n          </div>\n        </div>`;
+      }).join('');
+    }
+
+    function openHabitDetail(habitId) {
+      refreshDateContext();
+      const habit = habits.find(h => h.id === habitId);
+      if (!habit) return;
+      activeHabitId = habitId;
+      const header = document.getElementById('detail-header');
+      header.style.backgroundColor = habit.color;
+      document.getElementById('detail-title').innerText = habit.name;
+      document.getElementById('detail-section-target-title').style.color = habit.color;
+      document.getElementById('detail-section-score-title').style.color = habit.color;
+      document.getElementById('detail-section-history-title').style.color = habit.color;
+      document.getElementById('detail-meta-target').innerText = habit.target;
+      document.getElementById('detail-meta-frequency').innerText = habit.frequency;
+      document.getElementById('detail-meta-reminder').innerText = habit.reminder;
+      document.getElementById('detail-meta-streak').innerText = `${calculateStreak(habit)} أيام`;
+      renderTargetBars(habit);
+      renderScoreChart(habit, document.getElementById('detail-score-range')?.value || 'week');
+      renderHistoryChart(habit, document.getElementById('detail-history-range')?.value || 'week');
+      showScreen('screen-detail');
+    }
+
+    function renderScoreChart(habit, range='week') {
+      const line=document.getElementById('score-chart-line'), point=document.getElementById('score-chart-point');
+      line.setAttribute('stroke',habit.color); point.setAttribute('fill',habit.color);
+      const days=range==='year'?365:range==='month'?30:7;
+      const pts=8, vals=[];
+      for(let i=pts-1;i>=0;i--){
+        const offset=Math.round(i*(days-1)/(pts-1));
+        const d=new Date(); d.setDate(d.getDate()-offset);
+        const k=formatDateKey(d), v=Number(habit.history[k])||0, t=Number(habit.target)||1;
+        vals.push(Math.min(100,(v/t)*100));
+      }
+      const x0=35,x1=295,step=(x1-x0)/(pts-1);
+      const points=vals.map((v,i)=>`${x0+i*step},${120-(v/100)*100}`).join(' ');
+      line.setAttribute('points',points);
+      const last=vals[vals.length-1], y=120-(last/100)*100;
+      point.setAttribute('cx',x1); point.setAttribute('cy',y);
+    }
+
+    function renderHistoryChart(habit, range='week') {
+      const group=document.getElementById('history-bars-group'); group.innerHTML='';
+      let days=range==='month'?30:range==='day'?1:7;
+      let buckets=[];
+      if(days===1){ buckets=[{label:'اليوم',value:Number(habit.history[dateKeys[0]])||0}]; }
+      else if(days===7){
+        for(let i=6;i>=0;i--){const k=dateKeys[i]; buckets.push({label:getDayHeaderInfo(k).dayName.substring(0,3),value:Number(habit.history[k])||0});}
+      } else {
+        for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=formatDateKey(d);buckets.push({label:String(d.getDate()),value:Number(habit.history[k])||0});}
+      }
+      const max=Math.max(Number(habit.target)||1,...buckets.map(b=>b.value),1);
+      const width=range==='month'?8:24, startX=range==='month'?35:45, endX=305;
+      const gap=buckets.length>1?(endX-startX)/(buckets.length-1):0;
+      buckets.forEach((b,i)=>{
+        const x=range==='month'?startX+i*gap:startX+i*gap;
+        const h=Math.max(b.value>0?5:2,(b.value/max)*90), y=112-h;
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',x-width/2); rect.setAttribute('y',y); rect.setAttribute('width',width); rect.setAttribute('height',h); rect.setAttribute('rx','3'); rect.setAttribute('fill',b.value>0?habit.color:'#cbd5e1'); group.appendChild(rect);
+        if(b.value>0 && (range!=='month' || i%5===0 || i===29)){
+          const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',x);t.setAttribute('y',Math.max(10,y-4));t.setAttribute('text-anchor','middle');t.setAttribute('fill',habit.color);t.setAttribute('font-size','9');t.setAttribute('font-weight','bold');t.textContent=fmtCompact(b.value);group.appendChild(t);
+        }
+        const lab=document.createElementNS('http://www.w3.org/2000/svg','text'); lab.setAttribute('x',x);lab.setAttribute('y','132');lab.setAttribute('text-anchor','middle');lab.setAttribute('fill','#94a3b8');lab.setAttribute('font-size','8');lab.textContent=b.label;group.appendChild(lab);
+      });
+    }
+
+    function requestDeleteHabit(habitId){
+      const habit=habits.find(h=>h.id===habitId); if(!habit)return;
+      activeHabitId=habitId;
+      const msg=document.getElementById('delete-habit-message');
+      if(msg)msg.textContent=`سيتم حذف «${habit.name}» من القائمة وسجلّه من بيانات التطبيق. لا يمكن التراجع بعد التأكيد.`;
+      document.getElementById('modal-delete-habit').classList.remove('hidden');
+      document.getElementById('modal-delete-habit').classList.add('flex');
+    }
+    function closeDeleteHabitModal(){
+      const m=document.getElementById('modal-delete-habit'); m.classList.add('hidden'); m.classList.remove('flex');
+    }
+    function confirmDeleteHabit(){
+      if(!activeHabitId)return;
+      habits=habits.filter(h=>h.id!==activeHabitId);
+      if(misbahaIndex>=habits.length)misbahaIndex=Math.max(0,habits.length-1);
+      saveHabits(); renderHabitsList(); renderTodaySummary(); renderDailyTotalCounter(); closeDeleteHabitModal();
+      activeHabitId=null;
+      showScreen('screen-main');
+    }
+
+    function openCreateHabitForm(editId = null) {
+      editingHabitId = editId;
+
+      if (editId) {
+        const habit = habits.find(h => h.id === editId);
+        if (!habit) return;
+
+        document.getElementById('form-screen-title').innerText = 'تعديل العادة';
+        document.getElementById('input-name').value = habit.name;
+        document.getElementById('input-question').value = habit.question || '';
+        document.getElementById('input-unit').value = habit.unit || '';
+        document.getElementById('input-target').value = habit.target || 100;
+        document.getElementById('select-frequency').value = habit.frequency || 'كل يوم';
+        document.getElementById('select-target-type').value = habit.targetType || 'على الأقل';
+        document.getElementById('select-reminder').value = habit.reminder || 'إيقاف';
+        document.getElementById('input-notes').value = habit.notes || '';
+        selectedFormColor = habit.color;
+      } else {
+        document.getElementById('form-screen-title').innerText = 'إنشاء عادة جديدة';
+        document.getElementById('input-name').value = '';
+        document.getElementById('input-question').value = '';
+        document.getElementById('input-unit').value = '';
+        document.getElementById('input-target').value = 100;
+        document.getElementById('select-frequency').value = 'كل يوم';
+        document.getElementById('select-target-type').value = 'على الأقل';
+        document.getElementById('select-reminder').value = 'إيقاف';
+        document.getElementById('input-notes').value = '';
+        selectedFormColor = '#1976D2';
+      }
+
+      updateFormColorUi();
+      showScreen('screen-form');
+    }
+
+    function updateFormColorUi() {
+      document.getElementById('form-header').style.backgroundColor = selectedFormColor;
+      document.getElementById('selected-color-swatch').style.backgroundColor = selectedFormColor;
+    }
+
+    function renderColorPalette() {
+      const grid = document.getElementById('color-palette-grid');
+      grid.innerHTML = '';
+      COLOR_PALETTE.forEach(c => {
+        const btn = document.createElement('div');
+        btn.className = 'w-10 h-10 rounded-full cursor-pointer transition transform hover:scale-110 flex items-center justify-center border-2 border-white shadow';
+        btn.style.backgroundColor = c.hex;
+        btn.onclick = () => {
+          selectedFormColor = c.hex;
+          updateFormColorUi();
+          document.getElementById('modal-color-picker').classList.add('hidden');
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function addPresetHabit(preset){
+      const h={id:`habit-${Date.now()}-${Math.floor(Math.random()*10000)}`,name:preset.name,color:preset.color,question:`كم مرة أتممت ${preset.name} اليوم؟`,unit:preset.unit,target:preset.target,frequency:'كل يوم',targetType:'على الأقل',reminder:'إيقاف',notes:'',fav:false,history:{}};
+      h.history[dateKeys[0]]=0; habits.push(h);
+    }
+    function addDhikrPackage(key){
+      const pack=DHIKR_PACKAGES[key]; if(!pack)return;
+      pack.items.forEach(addPresetHabit); saveHabits(); renderHabitsList();
+      alert(`تمت إضافة ${pack.name} (${pack.items.length} أذكار).`);
+    }
+    function addAllDhikrPackages(){
+      Object.values(DHIKR_PACKAGES).forEach(pack=>pack.items.forEach(addPresetHabit));
+      saveHabits(); renderHabitsList(); alert('تمت إضافة حزم أذكار الصباح والمساء والنوم وما بعد الصلاة.');
+    }
+    function renderPresetsLibrary(presetTab='dhikr'){
+      const container=document.getElementById('presets-container'); container.innerHTML='';
+      if(presetTab==='dhikr'){
+        const packageWrap=document.createElement('div'); packageWrap.className='space-y-2 pb-3';
+        packageWrap.innerHTML=`<div class="grid grid-cols-2 gap-2">${Object.entries(DHIKR_PACKAGES).map(([k,p])=>`<button data-pack="${k}" class="text-right p-3 rounded-xl bg-blue-50 dark:bg-slate-700 text-xs font-bold">${p.name}<span class="block text-[10px] text-slate-400 mt-1">${p.items.length} أذكار</span></button>`).join('')}</div><button id="btn-add-all-packages" class="w-full py-2 rounded-xl bg-amber-500 text-white text-xs font-bold">✨ إضافة الحزم الأربع كاملة</button>`;
+        container.appendChild(packageWrap);
+        packageWrap.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>addDhikrPackage(b.dataset.pack));
+        packageWrap.querySelector('#btn-add-all-packages').onclick=addAllDhikrPackages;
+        REQUESTED_DHIKR_PRESETS.forEach(preset=>{
+          const card=document.createElement('div'); card.className='p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/60 transition cursor-pointer flex items-center justify-between gap-2';
+          card.innerHTML=`<div class="flex-1"><h5 class="font-bold text-xs md:text-sm text-slate-800 dark:text-slate-100 font-dhikr leading-normal">${preset.name}</h5><span class="text-[10px] text-slate-400">الهدف الافتراضي: ${preset.target} ${preset.unit}</span></div><button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold">إضافة</button>`;
+          card.querySelector('button').onclick=e=>{e.stopPropagation();addPresetHabit(preset);saveHabits();renderHabitsList();}; container.appendChild(card);
+        });
+      } else {
+        GENERAL_HEALTH_PRESETS.forEach(preset=>{ const card=document.createElement('div'); card.className='p-3 rounded-xl cursor-pointer flex items-center justify-between'; card.innerHTML=`<div><h5 class="font-bold text-xs text-slate-800 dark:text-slate-100">${preset.name}</h5><span class="text-[10px] text-slate-400">الهدف: ${preset.target} ${preset.unit}</span></div><button class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold">إضافة</button>`; card.onclick=()=>{addPresetHabit(preset);saveHabits();renderHabitsList();}; container.appendChild(card);});
+      }
+    }
+
+    function openLogModal(habitId, dateKey, currentVal) {
+      const habit = habits.find(h => h.id === habitId);
+      if (!habit) return;
+
+      activeLogTarget = { habitId, dateStr: dateKey };
+      const info = getDayHeaderInfo(dateKey);
+
+      document.getElementById('modal-log-title').innerText = habit.name;
+      document.getElementById('modal-log-date').innerText = `${info.dayName} ${info.dayNum}`;
+      document.getElementById('modal-log-header').style.backgroundColor = habit.color;
+      document.getElementById('input-log-val').value = currentVal || habit.target;
+      document.getElementById('btn-quick-target').innerText = `إكمال الهدف (${habit.target})`;
+      document.getElementById('btn-save-log').style.backgroundColor = habit.color;
+
+      document.getElementById('modal-log-entry').classList.remove('hidden');
+    }
+
+    function closeLogModal() {
+      document.getElementById('modal-log-entry').classList.add('hidden');
+    }
+
+    function get365Keys(){const keys=[]; const d=new Date(); for(let i=364;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);keys.push(formatDateKey(x));}return keys;}
+    function renderDashboard(){
+      const keys=get365Keys(); const total=habits.reduce((n,h)=>n+keys.reduce((s,k)=>s+(Number(h.history[k])||0),0),0); const completed=habits.reduce((n,h)=>n+keys.filter(k=>(Number(h.history[k])||0)>=(Number(h.target)||1)).length,0); const streaks=habits.map(getLongestStreak);
+      document.getElementById('dashboard-summary').innerHTML=`<div class="p-3 rounded-xl bg-blue-50 dark:bg-slate-700 text-center"><b>${habits.length}</b><span class="block text-[10px] text-slate-400">عادات</span></div><div class="p-3 rounded-xl bg-green-50 dark:bg-slate-700 text-center"><b>${completed}</b><span class="block text-[10px] text-slate-400">أيام مكتملة</span></div><div class="p-3 rounded-xl bg-amber-50 dark:bg-slate-700 text-center"><b>${Math.max(0,...streaks,0)}</b><span class="block text-[10px] text-slate-400">أطول سلسلة</span></div>`;
+      const map=document.getElementById('annual-heatmap'); map.innerHTML=''; keys.forEach(k=>{let score=0;habits.forEach(h=>{const v=Number(h.history[k])||0,t=Number(h.target)||1;score=Math.max(score,Math.min(1,v/t));});const cell=document.createElement('div');cell.title=`${k}: ${Math.round(score*100)}%`;cell.className='w-3 h-3 rounded-sm';cell.style.backgroundColor=score===0?'#e2e8f0':`hsl(210, 80%, ${90-score*50}%)`;map.appendChild(cell);});
+      const badges=[['🌱','البداية',completed>=1],['🔥','7 أيام',Math.max(...streaks,0)>=7],['🏆','30 يوماً',Math.max(...streaks,0)>=30],['💯','100 إنجاز',completed>=100],['📿','1000 تسبيحة',total>=1000],['⭐','365 يوماً',completed>=365]];
+      document.getElementById('badges-grid').innerHTML=badges.map(b=>`<div class="p-3 rounded-xl border ${b[2]?'border-amber-300 bg-amber-50 dark:bg-slate-700':'border-slate-200 opacity-40 dark:border-slate-700'}"><span class="text-xl">${b[0]}</span><b class="text-xs mr-2">${b[1]}</b></div>`).join('');
+    }
+    function showVirtue(){
+      const h=habits[misbahaIndex]; if(!h)return; document.getElementById('virtue-title').innerText=h.name;
+      const known={'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ':'ذِكرٌ عظيمٌ ثبت في السنة فضل الإكثار منه، ويُعرض هنا دون نسبة نص حديث محدد لعدم وجود مصدر موثق داخل الملف الأصلي.','أَسْتَغْفِرُ اللَّهَ':'الاستغفار من الذكر المشروع، وترد فيه نصوص كثيرة في الكتاب والسنة.','اللَّهُ أَكْبَرُ':'التكبير من ألفاظ الذكر المشروعة، وهو من أعظم الأذكار.'};
+      document.getElementById('virtue-text').innerText=known[h.name]||'هذا الذكر من الأذكار التي أضيفت إلى التطبيق. سيتم عرض فضله التفصيلي فقط عند توثيق مصدره.'; document.getElementById('virtue-source').innerText='ملاحظة توثيقية: لا يُنسب حديث محدد من هذه النافذة دون مصدر.'; document.getElementById('modal-virtue').classList.remove('hidden');
+    }
+
+    function setupEventListeners() {
+      // Main screen events
+      document.getElementById('btn-open-misbaha').onclick = openDigitalMisbaha;
+      document.getElementById('btn-back-from-misbaha').onclick = () => showScreen('screen-main');
+      document.getElementById('btn-add-habit').onclick = () => openCreateHabitForm();
+      document.getElementById('btn-cancel-form').onclick = () => showScreen('screen-main');
+      document.getElementById('btn-back-detail').onclick = () => {
+        renderHabitsList();
+        showScreen('screen-main');
+      };
+
+      // Misbaha Interactivity
+      document.getElementById('dhikr-card-tap-area').onclick = () => incrementMisbahaCount(1);
+      document.getElementById('btn-tap-counter-circle').onclick = (e) => {
+        e.stopPropagation();
+        incrementMisbahaCount(1);
+      };
+
+      document.querySelectorAll('.btn-quick-add-misbaha').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const amount = Number(btn.getAttribute('data-add')) || 1;
+          incrementMisbahaCount(amount);
+        };
+      });
+
+      document.getElementById('btn-edit-manual-misbaha').onclick = (e) => {
+        e.stopPropagation();
+        const habit = habits[misbahaIndex];
+        if (habit) openLogModal(habit.id, dateKeys[0], habit.history[dateKeys[0]] || 0);
+      };
+
+      document.getElementById('btn-prev-dhikr').onclick = () => {
+        playClickSound();
+        misbahaIndex = (misbahaIndex - 1 + habits.length) % habits.length;
+        updateMisbahaUI();
+      };
+
+      document.getElementById('btn-next-dhikr').onclick = () => {
+        playClickSound();
+        misbahaIndex = (misbahaIndex + 1) % habits.length;
+        updateMisbahaUI();
+      };
+
+      document.getElementById('btn-reset-misbaha').onclick = () => {
+        playClickSound();
+        const habit = habits[misbahaIndex];
+        if (habit) {
+          habit.history[dateKeys[0]] = 0;
+          saveHabits();
+          updateMisbahaUI();
+          renderHabitsList();
+        }
+      };
+
+      document.getElementById('btn-undo-misbaha').onclick = undoMisbahaAction;
+      document.getElementById('btn-reset-misbaha-top').onclick = () => {
+        document.getElementById('btn-reset-misbaha').click();
+      };
+
+      document.getElementById('btn-fav-dhikr').onclick = (e) => {
+        e.stopPropagation();
+        playClickSound();
+        const habit = habits[misbahaIndex];
+        if (habit) {
+          habit.fav = !habit.fav;
+          saveHabits();
+          updateMisbahaUI();
+        }
+      };
+
+      document.getElementById('btn-share-dhikr').onclick = () => {
+        const habit = habits[misbahaIndex];
+        if (habit && navigator.share) {
+          navigator.share({ title: 'أذكاري', text: `${habit.name}\nتم قراءتها ${habit.history[dateKeys[0]] || 0} مرة.` });
+        } else {
+          navigator.clipboard?.writeText(`${habit.name}\nتم قراءتها ${habit.history[dateKeys[0]] || 0} مرة.`).then(()=>alert('تم نسخ الذكر إلى الحافظة!')).catch(()=>alert(`${habit.name}\nتم قراءتها ${habit.history[dateKeys[0]] || 0} مرة.`));
+        }
+      };
+
+      document.getElementById('btn-misbaha-presets').onclick = () => {
+        renderPresetsLibrary('dhikr');
+        document.getElementById('modal-presets').classList.remove('hidden');
+      };
+
+      // Theme toggle buttons
+      const toggleTheme = () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        const iconClass = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
+        document.getElementById('theme-icon').className = iconClass;
+        document.getElementById('theme-icon-misbaha').className = iconClass;
+      };
+
+      document.getElementById('btn-toggle-dark').onclick = toggleTheme;
+      document.getElementById('btn-toggle-dark-misbaha').onclick = toggleTheme;
+
+      // Sound toggle buttons
+      const toggleSound = () => {
+        isSoundEnabled = !isSoundEnabled;
+        const iconClass = isSoundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-red-400';
+        document.getElementById('sound-icon').className = iconClass;
+        document.getElementById('sound-icon-misbaha').className = iconClass;
+      };
+
+      document.getElementById('btn-toggle-sound').onclick = toggleSound;
+      document.getElementById('btn-toggle-sound-misbaha').onclick = toggleSound;
+
+      // Presets Modal Tabs
+      document.getElementById('btn-add-preset').onclick = () => {
+        renderPresetsLibrary('dhikr');
+        document.getElementById('modal-presets').classList.remove('hidden');
+      };
+      document.getElementById('btn-close-presets').onclick = () => {
+        document.getElementById('modal-presets').classList.add('hidden');
+      };
+
+      document.getElementById('tab-presets-dhikr').onclick = (e) => {
+        e.target.className = 'flex-1 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 dark:text-blue-400';
+        document.getElementById('tab-presets-health').className = 'flex-1 py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400';
+        renderPresetsLibrary('dhikr');
+      };
+
+      document.getElementById('tab-presets-health').onclick = (e) => {
+        e.target.className = 'flex-1 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 dark:text-blue-400';
+        document.getElementById('tab-presets-dhikr').className = 'flex-1 py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400';
+        renderPresetsLibrary('health');
+      };
+
+      // Form Save
+      document.getElementById('btn-save-habit').onclick = () => {
+        const nameVal = document.getElementById('input-name').value.trim();
+        if (!nameVal) {
+          document.getElementById('input-name').focus();
+          return;
+        }
+
+        const habitData = {
+          id: editingHabitId || `habit-${Date.now()}`,
+          name: nameVal,
+          color: selectedFormColor,
+          question: document.getElementById('input-question').value.trim(),
+          unit: document.getElementById('input-unit').value.trim(),
+          target: Number(document.getElementById('input-target').value) || 100,
+          frequency: document.getElementById('select-frequency').value,
+          targetType: document.getElementById('select-target-type').value,
+          reminder: document.getElementById('select-reminder').value,
+          notes: document.getElementById('input-notes').value.trim(),
+          fav: editingHabitId ? (habits.find(h => h.id === editingHabitId)?.fav || false) : false,
+          history: editingHabitId ? (habits.find(h => h.id === editingHabitId)?.history || {}) : {}
+        };
+
+        if (editingHabitId) {
+          const idx = habits.findIndex(h => h.id === editingHabitId);
+          if (idx !== -1) habits[idx] = habitData;
+        } else {
+          habitData.history[dateKeys[0]] = 0;
+          habits.unshift(habitData);
+        }
+
+        saveHabits();
+        renderHabitsList();
+        showScreen('screen-main');
+      };
+
+      document.getElementById('btn-edit-habit').onclick = () => {
+        if (activeHabitId) openCreateHabitForm(activeHabitId);
+      };
+
+      document.getElementById('btn-delete-habit').onclick = () => {
+        if (activeHabitId) requestDeleteHabit(activeHabitId);
+      };
+      document.getElementById('btn-cancel-delete-habit').onclick = closeDeleteHabitModal;
+      document.getElementById('btn-confirm-delete-habit').onclick = confirmDeleteHabit;
+      document.getElementById('detail-score-range').onchange = (e) => {
+        const h=habits.find(x=>x.id===activeHabitId); if(h) renderScoreChart(h,e.target.value);
+      };
+      document.getElementById('detail-history-range').onchange = (e) => {
+        const h=habits.find(x=>x.id===activeHabitId); if(h) renderHistoryChart(h,e.target.value);
+      };
+
+      document.getElementById('btn-color-picker-trigger').onclick = () => {
+        document.getElementById('modal-color-picker').classList.remove('hidden');
+      };
+      document.getElementById('btn-close-color-modal').onclick = () => {
+        document.getElementById('modal-color-picker').classList.add('hidden');
+      };
+
+      document.getElementById('btn-cancel-log').onclick = closeLogModal;
+
+      const adjustLogModalVal = (delta) => {
+        playClickSound();
+        const input = document.getElementById('input-log-val');
+        const current = Number(input.value) || 0;
+        input.value = Math.max(0, current + delta);
+      };
+
+      document.getElementById('btn-log-minus-10').onclick = () => adjustLogModalVal(-10);
+      document.getElementById('btn-log-minus-1').onclick = () => adjustLogModalVal(-1);
+      document.getElementById('btn-log-plus-1').onclick = () => adjustLogModalVal(1);
+      document.getElementById('btn-log-plus-10').onclick = () => adjustLogModalVal(10);
+
+      document.getElementById('btn-step-1').onclick = () => adjustLogModalVal(1);
+      document.getElementById('btn-step-5').onclick = () => adjustLogModalVal(5);
+      document.getElementById('btn-step-10').onclick = () => adjustLogModalVal(10);
+      document.getElementById('btn-step-50').onclick = () => adjustLogModalVal(50);
+      document.getElementById('btn-step-100').onclick = () => adjustLogModalVal(100);
+
+      document.getElementById('btn-quick-target').onclick = () => {
+        playClickSound();
+        const habit = habits.find(h => h.id === activeLogTarget.habitId);
+        if (habit) document.getElementById('input-log-val').value = habit.target;
+      };
+
+      document.getElementById('btn-quick-zero').onclick = () => {
+        playClickSound();
+        document.getElementById('input-log-val').value = 0;
+      };
+
+      document.getElementById('btn-save-log').onclick = () => {
+        const { habitId, dateStr } = activeLogTarget;
+        const val = Number(document.getElementById('input-log-val').value) || 0;
+        const habit = habits.find(h => h.id === habitId);
+        if (habit) {
+          habit.history[dateStr] = val;
+          saveHabits();
+          renderHabitsList();
+          if (document.getElementById('screen-misbaha').classList.contains('active')) {
+            updateMisbahaUI();
+          }
+        }
+        closeLogModal();
+      };
+
+      document.getElementById('btn-filter-sort').onclick = () => {
+        document.getElementById('modal-filter-sort').classList.remove('hidden');
+      };
+      document.getElementById('btn-today-summary').onclick = () => { renderDashboard(); document.getElementById('modal-dashboard').classList.remove('hidden'); };
+      document.getElementById('btn-close-filter-modal').onclick = () => {
+        const selected = document.querySelector('input[name="sort-option"]:checked');
+        if (selected) currentSort = selected.value;
+        renderHabitsList();
+        document.getElementById('modal-filter-sort').classList.add('hidden');
+      };
+
+      document.getElementById('menu-opt-reminders').onclick = toggleReminders;
+      const reminderLabel=document.getElementById('reminder-menu-label'); if(reminderLabel) reminderLabel.textContent=remindersEnabled?'إيقاف تذكيرات التطبيق':'تفعيل تذكيرات التطبيق';
+      document.getElementById('btn-main-menu').onclick = () => {
+        document.getElementById('modal-main-menu').classList.remove('hidden');
+      };
+      document.getElementById('menu-opt-close').onclick = () => {
+        document.getElementById('modal-main-menu').classList.add('hidden');
+      };
+
+      document.getElementById('btn-virtue-dhikr').onclick=(e)=>{e.stopPropagation();showVirtue();};
+      document.getElementById('btn-close-virtue').onclick=()=>document.getElementById('modal-virtue').classList.add('hidden');
+      document.getElementById('menu-opt-dashboard').onclick=()=>{renderDashboard();document.getElementById('modal-main-menu').classList.add('hidden');document.getElementById('modal-dashboard').classList.remove('hidden');};
+      document.getElementById('btn-close-dashboard').onclick=()=>document.getElementById('modal-dashboard').classList.add('hidden');
+
+      // Backup & Restore
+      document.getElementById('menu-opt-export').onclick = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(habits, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `habits_misbaha_backup_${formatDateKey(new Date())}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        document.getElementById('modal-main-menu').classList.add('hidden');
+      };
+
+      document.getElementById('menu-opt-import').onclick = () => {
+        document.getElementById('input-import-file').click();
+      };
+
+      document.getElementById('input-import-file').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const imported = JSON.parse(event.target.result);
+            if (Array.isArray(imported)) {
+              habits = imported;
+              saveHabits();
+              renderHabitsList();
+              alert('تم استرجاع البيانات بنجاح!');
+            }
+          } catch (err) {
+            alert('حدث خطأ أثناء قراءة الملف');
+          }
+        };
+        reader.readAsText(file);
+        document.getElementById('modal-main-menu').classList.add('hidden');
+      };
+
+      document.getElementById('menu-opt-reset').onclick = () => {
+        localStorage.removeItem('loop_habits_misbaha_data');
+        loadHabits();
+    startNewDayAtZero();
+        renderHabitsList();
+        document.getElementById('modal-main-menu').classList.add('hidden');
+      };
+    }
+
+
+    let azkariLastDayKey = formatDateKey(new Date());
+    setInterval(() => {
+      const nowKey = formatDateKey(new Date());
+      if(nowKey !== azkariLastDayKey){
+        azkariLastDayKey = nowKey;
+        refreshDateContext();
+        startNewDayAtZero();
+        renderDateHeaders();
+        renderWeeklyDays();
+        renderHabitsList();
+        renderTodaySummary();
+        renderDailyTotalCounter();
+      }
+    }, 30000);
+
+    // Initialize application on window load
+    window.onload = function() {
+      loadHabits();
+      renderDateHeaders();
+      renderWeeklyDays();
+      renderHabitsList();
+      renderTodaySummary();
+      renderDailyTotalCounter();
+      if(remindersEnabled){ if('Notification' in window && Notification.permission==='default'){} clearInterval(reminderTimer); reminderTimer=setInterval(checkReminders,30000); }
+      document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshDateContext();renderDateHeaders();renderWeeklyDays();renderHabitsList();renderTodaySummary();renderDailyTotalCounter();}});
+      renderColorPalette();
+      setupEventListeners();
+    };
+  </script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+    }
+  </script>
+</body>
+</html>
